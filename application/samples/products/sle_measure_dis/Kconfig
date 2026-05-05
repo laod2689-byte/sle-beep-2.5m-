@@ -1,0 +1,52 @@
+﻿#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) HiSilicon (Shanghai) Technologies Co., Ltd. 2024-2024. All rights reserved.
+#===============================================================================
+
+choice
+    prompt "Select sle uart type"
+    default SAMPLE_SUPPORT_SLE_MEASURE_DIS_SERVER
+    config SAMPLE_SUPPORT_SLE_MEASURE_DIS_SERVER
+        bool "Enable SLE MEASURE_DIS Server sample."
+    config SAMPLE_SUPPORT_SLE_MEASURE_DIS_CLIENT
+        bool "Enable SLE MEASURE_DIS Client sample."
+endchoice
+
+if SAMPLE_SUPPORT_SLE_MEASURE_DIS_SERVER
+
+config MEASURE_DIS_LED_PIN
+    int
+    prompt "SLE measure distance alert LED pin."
+    default 31
+
+config MEASURE_DIS_BUZZER_PIN
+    int
+    prompt "SLE measure distance alert buzzer pin."
+    default 15
+
+config MEASURE_DIS_BUZZER_ACTIVE_LEVEL
+    int
+    prompt "SLE measure distance buzzer active level, 0 low, 1 high."
+    default 0
+
+config MEASURE_DIS_UART_BUS
+    int
+    prompt "UART bus for changing alert threshold."
+    default 2
+
+config MEASURE_DIS_UART_TX_PIN
+    int
+    prompt "UART TX pin for changing alert threshold."
+    default 17
+
+config MEASURE_DIS_UART_RX_PIN
+    int
+    prompt "UART RX pin for changing alert threshold."
+    default 18
+
+config MEASURE_DIS_DEFAULT_THRESHOLD_CM
+    int
+    prompt "Default alert threshold in centimeters."
+    default 250
+
+endif
