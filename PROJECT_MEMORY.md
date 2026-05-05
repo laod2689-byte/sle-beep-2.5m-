@@ -115,3 +115,58 @@ Other artifact meanings:
   - application jump filter (`MEASURE_DIS_MAX_JUMP_CM`)
   - hysteresis around threshold
   - measurement update period versus buzzer reaction time
+
+## Best handoff prompt
+Use this as the first prompt for a new Codex session:
+
+```text
+请先阅读本仓库根目录的 AGENTS.md、PROJECT_MEMORY.md、docs/DEBUG_PLAYBOOK.md。
+同时使用 c-skill 仓库里的 sle-ranging-bs21e skill。
+这是 BearPi/HiSilicon BS21E 星闪 SLE 测距项目，当前重点是 server 侧测距、UART 阈值修改、LED/蜂鸣器报警。
+不要从零猜业务逻辑，先确认实际编译目录、生成配置、当前参数和烧录文件。
+```
+
+## User preference and communication notes
+- User prefers short, direct Chinese explanations.
+- When explaining logs, give the conclusion first, then the reason.
+- Avoid abstract RTOS jargon unless it changes the next action.
+- If a change has a tradeoff, state it plainly before editing.
+- User cares about real board behavior more than theoretical neatness.
+
+## Decision history
+- The project first showed stack overflow in `MeasureDisInd`; stack size was increased.
+- Remote/local IQ mismatch and queue backlog caused stale-pair behavior; snapshot plus busy-drop logic was kept.
+- Indicator timeout could trigger while the algorithm was still computing; timeout now checks algorithm busy state.
+- Extra application smoothing was tried, then removed because the user observed worse stability.
+- Current accepted alarm behavior keeps hysteresis, now set to `15cm`.
+- Current accepted jump filter remains `300cm`.
+- Current desired default threshold is `2.50m`, but generated config must be checked.
+
+## Exact behavioral interpretation
+- `threshold` in logs is the center threshold.
+- `far` and `buzzer` are affected by hysteresis.
+- For threshold `2.50m` and hysteresis `15cm`:
+  - `distance >= 2.65m` turns alarm on.
+  - `distance <= 2.35m` turns alarm off.
+  - between those two values, alarm keeps previous state.
+- Buzzer is not a fixed-duration beep. It is GPIO state following `g_measure_dis_buzzer_on`.
+- A perceived delayed stop can be caused by hysteresis plus the next valid ranging update.
+
+## Uploaded repository scope
+- GitHub code repo contains only the SLE measure distance sample and handoff docs, not the full SDK.
+- GitHub skill repo contains the `sle-ranging-bs21e` skill.
+- Do not expect the uploaded code repo alone to compile without the original BearPi/HiSilicon SDK tree.
+
+## Better debugging sequence
+1. Confirm actual repo and generated config.
+2. Confirm whether logs still print expected threshold.
+3. Confirm distance logs continue after any algorithm failure.
+4. Confirm `local ts` and `remote ts` are close.
+5. Confirm `remote iq queue backlog` is occasional, not continuous.
+6. Confirm alarm thresholds after hysteresis before changing buzzer code.
+
+## Do not change without asking
+- Do not re-add application IIR/average smoothing.
+- Do not remove hysteresis completely unless user accepts buzzer chatter.
+- Do not change `MEASURE_DIS_MAX_JUMP_CM` if the user says filtering should remain `300cm`.
+- Do not upload build outputs as authoritative firmware unless they were rebuilt after the latest parameter change.

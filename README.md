@@ -26,4 +26,10 @@ BearPi/HiSilicon BS21E 星闪 SLE 测距蜂鸣器报警示例。
 - `application.bin`：原始未签名 app，一般不是首选。
 
 ## 接手前先读
-请先读 `PROJECT_MEMORY.md`，里面记录了开发过程、踩坑、构建注意事项和当前已知问题。
+请先读：
+
+- `PROJECT_MEMORY.md`：项目状态、决策历史、当前参数和已知问题。
+- `docs/DEBUG_PLAYBOOK.md`：日志判断、蜂鸣器、滤波、构建烧录排查流程。
+- `docs/CODEX_HANDOFF_PROMPT.md`：给另一个 Codex 接手时的首条提示。
+
+本仓库不是完整 SDK，只是当前测距相关代码和交接资料。完整编译仍需要原 BearPi/HiSilicon 工程树。
